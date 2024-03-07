@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
     public float speed = 500;
     private GameObject focalPoint;
-    public GameObject Duck;
     // Start is called before the first frame update
     void Start()
     {
