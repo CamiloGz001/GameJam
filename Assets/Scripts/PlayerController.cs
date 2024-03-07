@@ -2,20 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using UnityEditor.Experimental.GraphView;
 
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
     public float speed;
-    public float initialSpeed =500;
+    public float initialSpeed = 500;
     private GameObject focalPoint;
     public int maxEnergy = 100;
     public int currentEnergy;
     public Energy energyBar;
     [SerializeField] private Animator playerAnim;
-    // Start is called before the first frame update
+
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
@@ -26,52 +24,66 @@ public class PlayerController : MonoBehaviour
         playerAnim = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Movement();
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            speed=1000;
             playerRb.AddForce(focalPoint.transform.forward * speed * Time.deltaTime);
             GetTired();
         }
+        
         Recover();
-        speed=initialSpeed;
-         
+        speed = initialSpeed;
     }
 
     void Movement()
-    {
-        float forwardInput = Input.GetAxis("Vertical");
-        float horizontalInput = Input.GetAxis("Horizontal");
-        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
-        playerRb.AddForce(focalPoint.transform.right * speed * horizontalInput); 
+{
+    float forwardInput = Input.GetAxis("Vertical");
+    float horizontalInput = Input.GetAxis("Horizontal");
+    Vector3 forwardForce = focalPoint.transform.forward * forwardInput * speed;
+    Vector3 horizontalForce = focalPoint.transform.right * horizontalInput * speed;
 
-        //PlayerAnimation
-        if(forwardInput != 0|| horizontalInput != 0)
-        {
-            playerAnim.SetBool("Walking", true);
-        } else 
-        {
-            playerAnim.SetBool("Walking", false);
-        }
+    playerRb.AddForce(forwardForce);
+    playerRb.AddForce(horizontalForce);
+
+    // Rotación del jugador
+    if (forwardInput != 0 || horizontalInput != 0)
+    {
+        Quaternion newRotation = Quaternion.LookRotation(forwardForce + horizontalForce);
+        playerRb.MoveRotation(newRotation);
     }
-    void GetTired(){
-        for(int i=0;i<maxEnergy;i++)
+
+    //PlayerAnimation
+    if (forwardInput != 0 || horizontalInput != 0)
+    {
+        playerAnim.SetBool("Walking", true);
+    }
+    else
+    {
+        playerAnim.SetBool("Walking", false);
+    }
+}
+
+    void GetTired()
+    {
+        for (int i = 0; i < maxEnergy; i++)
         {
-            currentEnergy -=i;
+            currentEnergy -= i;
             energyBar.SetEnergy(currentEnergy);
-            if(currentEnergy== 0){
+            if (currentEnergy == 0)
+            {
                 speed = 250;
             }
         }
     }
-    void Recover(){
-        for(int i=0;i<maxEnergy;i++)
+
+    void Recover()
+    {
+        for (int i = 0; i < maxEnergy; i++)
         {
-            currentEnergy +=i;
+            currentEnergy += i;
             energyBar.SetEnergy(currentEnergy);
         }
     }
