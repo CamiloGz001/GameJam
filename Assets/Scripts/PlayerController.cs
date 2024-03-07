@@ -38,8 +38,6 @@ public class PlayerController : MonoBehaviour
         }
         Recover();
         speed=500;
-        
-        
          
     }
 
