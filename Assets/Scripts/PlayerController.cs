@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
-    public float speed = 5.0f;
+    public float speed = 500;
     private GameObject focalPoint;
     public GameObject Duck;
     // Start is called before the first frame update
@@ -20,8 +20,8 @@ public class PlayerController : MonoBehaviour
     {
         float forwardInput = Input.GetAxis("Vertical");
         float horizontalInput = Input.GetAxis("Horizontal");
-        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed * Time.deltaTime);
-        playerRb.AddForce(focalPoint.transform.right * speed * horizontalInput * Time.deltaTime);   
+        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
+        playerRb.AddForce(focalPoint.transform.right * speed * horizontalInput);   
          
     }
 }
