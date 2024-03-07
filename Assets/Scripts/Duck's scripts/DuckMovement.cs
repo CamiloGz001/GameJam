@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class DuckMovement : MonoBehaviour
 {
-    public Collider patrolArea; // Área de patrulla definida
+    private Collider patrolArea; // Área de patrulla definida
     public Vector3 randomPoint;
     public float speed;
     public bool isItFull = false;
@@ -14,7 +14,7 @@ public class DuckMovement : MonoBehaviour
 
     void Start()
     {
-        patrolArea = GameObject.Find("Floor").GetComponent<BoxCollider>();
+        patrolArea = GameObject.Find("Patrol").GetComponent<BoxCollider>();
         SetRandomDestination();
 
     }
@@ -55,7 +55,7 @@ public class DuckMovement : MonoBehaviour
     {
         return new Vector3(
             Random.Range(bounds.min.x, bounds.max.x),
-            3,
+            7,
             Random.Range(bounds.min.z, bounds.max.z)
         );
     }
