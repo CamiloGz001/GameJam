@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
     public float speed;
-    public float initialSpeed = 10;
+    public float initialSpeed = 11;
      public GameObject food;
      public GameObject focalPoint;
     public bool hasFood;
