@@ -6,6 +6,7 @@ public class SpawnManager : MonoBehaviour
 {
     [SerializeField]
     GameObject DuckPrefab;
+    public int duckCount = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,9 +20,10 @@ public class SpawnManager : MonoBehaviour
     }
 
     IEnumerator SpawnDuck(){
-        while(true){
+        while(duckCount <= 7){
             yield return new WaitForSeconds(5.0f);
-            Instantiate(DuckPrefab);
+            Instantiate(DuckPrefab, transform.position, Quaternion.identity);
+            duckCount++;
         }
        
     }
