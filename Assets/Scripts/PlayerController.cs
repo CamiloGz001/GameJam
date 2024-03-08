@@ -108,7 +108,6 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("duck"))
         {
             duckMOvement = other.GetComponent<DuckMovement>();
-            callText.gameObject.SetActive(true);
             canCall = true;
 
         }
@@ -122,7 +121,6 @@ public class PlayerController : MonoBehaviour
     void OnTriggerExit(Collider other)
     {
         duckMOvement = null;
-        callText.gameObject.SetActive(false);
         canCall = false;
         canFeed = false;
     }
