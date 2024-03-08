@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using System;
-using UnityEditor.Experimental.GraphView;
 
 public class PlayerController : MonoBehaviour
 {
@@ -23,14 +20,40 @@ public class PlayerController : MonoBehaviour
         focalPoint = GameObject.Find("Focal Point");
         playerAnim = GetComponent<Animator>();
     }
+<<<<<<< Updated upstream
 void Update()
+=======
+
+    void Update()
+>>>>>>> Stashed changes
     {
         Movement();
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             isBoosting = true;
+<<<<<<< Updated upstream
         }
+=======
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            isBoosting = false;
+        }
+
+        if (isBoosting)
+        {
+            // Aumentar la velocidad mientras se mantiene presionada la tecla Espacio
+            speed = 15;
+        }
+        else
+        {
+            // Restaurar la velocidad inicial si la tecla Espacio no está presionada
+            speed = initialSpeed;
+        }
+    }
+>>>>>>> Stashed changes
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
@@ -76,7 +99,12 @@ void Movement()
             playerAnim.SetBool("Walking", false);
         }
     }
+<<<<<<< Updated upstream
 private void OnTriggerEnter(Collider other) {
+=======
+
+    private void OnTriggerEnter(Collider other) {
+>>>>>>> Stashed changes
         if(other.CompareTag("Food")){
             hasFood = true;
             food.gameObject.SetActive(true);
