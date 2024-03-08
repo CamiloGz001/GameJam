@@ -8,15 +8,11 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
     public float speed;
-    public float initialSpeed = 500;
+    public float initialSpeed = 10;
     private GameObject focalPoint;
 
      public GameObject food;
     public bool hasFood;
-
-    public int maxEnergy = 100;
-    public int currentEnergy;
-    public Energy energyBar;
     [SerializeField] private Animator playerAnim;
     private bool isBoosting = false;
 
@@ -31,11 +27,7 @@ public class PlayerController : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         focalPoint = GameObject.Find("Focal Point");
-        currentEnergy = maxEnergy;
-        energyBar.SetMaxEnergy(maxEnergy);
-
         playerAnim = GetComponent<Animator>();
-
         counterManager = GameObject.Find("GameManager").GetComponent<CounterManager>();
     }
 
@@ -53,105 +45,57 @@ public class PlayerController : MonoBehaviour
         {
             isBoosting = false;
         }
-        Recover();
-        
 
-        if (Input.GetKeyDown(KeyCode.Space) && canCall && duckMOvement!= null)
-        {
-            duckMOvement.GoToPlayer(transform.position);
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.E) && canFeed)
-        {
-            ToFeed(duckMOvement);
-
-        }
-    }
-    void FixedUpdate()
-    {
-        if (isBoosting && currentEnergy > 0)
+        if (isBoosting)
         {
             // Aumentar la velocidad mientras se mantiene presionada la tecla Espacio
-            speed += 0.3f;
-
-            // Disminuir la energía
-            currentEnergy--;
-            energyBar.SetEnergy(currentEnergy);
+            speed = 0.5f;
         }
         else
         {
             // Restaurar la velocidad inicial si la tecla Espacio no está presionada
             speed = initialSpeed;
         }
+        
+
+        if (Input.GetKeyDown(KeyCode.Space) && canCall && duckMOvement!= null)
+        {
+            duckMOvement.GoToPlayer(transform.position);
+        }
+
+        if (Input.GetKeyDown(KeyCode.E) && canFeed)
+        {
+            ToFeed(duckMOvement);
+        }
     }
-
-    void Movement()
-{
-    float forwardInput = Input.GetAxis("Vertical");
-    float horizontalInput = Input.GetAxis("Horizontal");
-
-    Vector3 cameraForward = Camera.main.transform.forward;
-    cameraForward.y = 0f;
-
-    Vector3 movementDirection = cameraForward * forwardInput + Camera.main.transform.right * horizontalInput;
-    movementDirection.Normalize();
-
-    playerRb.AddForce(movementDirection * speed, ForceMode.Impulse);
-
-    Quaternion newRotation = Quaternion.LookRotation(movementDirection);
-    playerRb.MoveRotation(newRotation);
-
-    // Animación del jugador
-    if (forwardInput != 0 || horizontalInput != 0)
+     void Movement()
     {
-        playerAnim.SetBool("Walking", true);
-    }
-    else
-    {
-        playerAnim.SetBool("Walking", false);
-    }
-}
-    /*void Movement()
-    {
-    float forwardInput = Input.GetAxis("Vertical");
-    float horizontalInput = Input.GetAxis("Horizontal");
-    Vector3 forwardForce = focalPoint.transform.forward * forwardInput * speed * Time.deltaTime;
-    Vector3 horizontalForce = focalPoint.transform.right * horizontalInput * speed * Time.deltaTime;
+        float forwardInput = Input.GetAxis("Vertical");
+        float horizontalInput = Input.GetAxis("Horizontal");
 
+        Vector3 cameraForward = Camera.main.transform.forward;
+        cameraForward.y = 0f;
 
-    playerRb.AddForce(forwardForce);
-    playerRb.AddForce(horizontalForce);
+        Vector3 movementDirection = cameraForward * forwardInput + Camera.main.transform.right * horizontalInput;
+        movementDirection.Normalize();
 
-        //PlayerAnimation
+        playerRb.AddForce(movementDirection * speed, ForceMode.Impulse);
+        // Aplicar fuerzas al jugador solo si hay entrada de movimiento
         if (forwardInput != 0 || horizontalInput != 0)
         {
-            // Agregar fuerzas de movimiento
-                playerRb.AddForce(forwardForce, ForceMode.VelocityChange);
-                playerRb.AddForce(horizontalForce, ForceMode.VelocityChange);
+            // Rotar el jugador hacia la dirección de movimiento
+            Quaternion newRotation = Quaternion.LookRotation(cameraForward + movementDirection);
+            playerRb.MoveRotation(newRotation);
 
-                // Rotar el jugador hacia la dirección de movimiento
-                Quaternion newRotation = Quaternion.LookRotation(forwardForce + horizontalForce);
-                playerRb.MoveRotation(newRotation);
-
-                // Animación del jugador
-                playerAnim.SetBool("Walking", true);
+            // Animación del jugador
+            playerAnim.SetBool("Walking", true);
         }
         else
         {
+            // Detener la animación si no hay movimiento
             playerAnim.SetBool("Walking", false);
         }
-    }*/
-
-    void Recover()
-    {
-        for (int i = 0; i < maxEnergy; i++)
-        {
-            currentEnergy += i;
-            energyBar.SetEnergy(currentEnergy);
-        }
     }
-
      void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("duck"))
