@@ -132,12 +132,6 @@ public class PlayerController : MonoBehaviour
         counterManager.DuckFeeded();
     }
 
-    private void OnTriggerEnter(Collider other) {
-        if(other.CompareTag("Food")){
-            hasFood = true;
-            food.gameObject.SetActive(true);
-        }
-    }
     void Jump(){
         playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
