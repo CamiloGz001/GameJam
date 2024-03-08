@@ -12,11 +12,15 @@ public class CounterManager : MonoBehaviour
     public int totalDucks;
     public int ducksDied;
     public int ducksFeed;
-    public DuckMovement duck;
+    public DuckMovement[] duck;
+    public HunterAction hunt;
     
     void Start()
     {
-        
+        hunt = GetComponent<HunterAction>();
+        duck = FindObjectsOfType<DuckMovement>();
+        hunt = FindObjectsOfType<HunterAction>()[0]; // Assuming first HunterAction found
+        //totalDucks = duck.Length;
     }
 
     // Update is called once per frame
@@ -26,14 +30,16 @@ public class CounterManager : MonoBehaviour
         totalDucksText.text = "x" + totalDucks.ToString();
         ducksDiedText.text = "x" + ducksDied.ToString();
         ducksFeedText.text = "x" + ducksFeed.ToString();
+        
     }
 
-    void DuckFeeded()
+    public void DuckFeeded()
     {
-        if(duck.isItFull)
-        {
-            //totalDucks
-        }
-        
+        ducksFeed++;
+    }
+
+    public void DuckDied()
+    {
+        ducksDied++;
     }
 }

@@ -12,10 +12,13 @@ public class movimiento : MonoBehaviour
     public TextMeshProUGUI callText;
     bool canCall = false;
     public bool canFeed = false;
+
+     public CounterManager counterManager;
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        counterManager = GameObject.Find("GameManager").GetComponent<CounterManager>();
         // duckMOvement = GameObject.Find("Duck").GetComponent<DuckMovement>();
     }
 
@@ -73,5 +76,6 @@ public class movimiento : MonoBehaviour
     {
         duckMovement.wait = false;
         duckMovement.isItFull = true;
+        counterManager.DuckFeeded();
     }
 }

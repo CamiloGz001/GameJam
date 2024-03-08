@@ -8,12 +8,16 @@ public class HunterAction : MonoBehaviour
     public AudioClip shoot;
     public float killInterval;
     public float initialDelay;
+    public CounterManager counterManager;
+    
     
     // Start is called before the first frame update
     void Start()
     {
+        counterManager = GameObject.Find("GameManager").GetComponent<CounterManager>();
         audioSource = GetComponent<AudioSource>();
         InvokeRepeating("KillDuck", initialDelay, killInterval);
+        
     }
 
     // Update is called once per frame
@@ -28,6 +32,7 @@ public class HunterAction : MonoBehaviour
             int index = Random.Range(0, ducks.Length);
             audioSource.PlayOneShot(shoot);
             Destroy(ducks[index]);
+            counterManager.DuckDied();
         }
 
     }
