@@ -61,50 +61,53 @@ public class PlayerController : MonoBehaviour
             duckMOvement.GoToPlayer(transform.position);
         }
 
-        if (Input.GetKeyDown(KeyCode.E) && canFeed)
+        if (Input.GetKeyDown(KeyCode.E) && canFeed && hasFood)
         {
+            Debug.Log("entre");
             ToFeed(duckMOvement);
+            hasFood = false;
         }
         if(Input.GetKeyDown(KeyCode.Space) && isOnGround){
             Jump();
         }
         
     }
-     void Movement()
-{
-    float forwardInput = Input.GetAxis("Vertical");
-    float horizontalInput = Input.GetAxis("Horizontal");
 
-    Vector3 cameraForward = Camera.main.transform.forward;
-    cameraForward.y = 0f; // Mantenemos la componente y en cero para evitar movimientos verticales
-
-    Vector3 movementDirection = cameraForward * forwardInput + Camera.main.transform.right * horizontalInput;
-    movementDirection.Normalize(); // Normalizamos el vector de dirección para evitar movimientos diagonales más rápidos
-
-    // Aplicar fuerzas al jugador solo si hay entrada de movimiento
-    if (forwardInput != 0 || horizontalInput != 0)
+    void Movement()
     {
-        // Calculamos la fuerza de movimiento multiplicando la dirección por la velocidad
-        Vector3 movementForce = movementDirection * speed * Time.deltaTime;
-        
-        // Aplicamos la fuerza al jugador
-        playerRb.AddForce(movementForce, ForceMode.VelocityChange);
+        float forwardInput = Input.GetAxis("Vertical");
+        float horizontalInput = Input.GetAxis("Horizontal");
 
-        // Rotar el jugador hacia la dirección de movimiento
-        Quaternion newRotation = Quaternion.LookRotation(movementDirection);
-        playerRb.MoveRotation(newRotation);
+        Vector3 cameraForward = Camera.main.transform.forward;
+        cameraForward.y = 0f; // Mantenemos la componente y en cero para evitar movimientos verticales
 
-        // Activar la animación del jugador
-        playerAnim.SetBool("Walking", true);
+        Vector3 movementDirection = cameraForward * forwardInput + Camera.main.transform.right * horizontalInput;
+        movementDirection.Normalize(); // Normalizamos el vector de dirección para evitar movimientos diagonales más rápidos
+
+        // Aplicar fuerzas al jugador solo si hay entrada de movimiento
+        if (forwardInput != 0 || horizontalInput != 0)
+        {
+            // Calculamos la fuerza de movimiento multiplicando la dirección por la velocidad
+            Vector3 movementForce = movementDirection * speed * Time.deltaTime;
+            
+            // Aplicamos la fuerza al jugador
+            playerRb.AddForce(movementForce, ForceMode.VelocityChange);
+
+            // Rotar el jugador hacia la dirección de movimiento
+            Quaternion newRotation = Quaternion.LookRotation(movementDirection);
+            playerRb.MoveRotation(newRotation);
+
+            // Activar la animación del jugador
+            playerAnim.SetBool("Walking", true);
+        }
+        else
+        {
+            // Detener la animación si no hay movimiento
+            playerAnim.SetBool("Walking", false);
+        }
     }
-    else
-    {
-        // Detener la animación si no hay movimiento
-        playerAnim.SetBool("Walking", false);
-    }
-}
 
-     void OnTriggerStay(Collider other)
+    void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("duck"))
         {
@@ -113,7 +116,7 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (Vector3.Distance(transform.position, other.transform.position) < 0.6)
+        if (Vector3.Distance(transform.position, other.transform.position) < 1)
         {
             canFeed = true;
         }
@@ -141,6 +144,9 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter(Collision collision) {
         if(collision.gameObject.CompareTag("Ground")){
             isOnGround = true;
-        } 
+        }else if(collision.gameObject.CompareTag("Food"))
+        {
+            hasFood = true;
+        }
     }
 }

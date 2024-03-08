@@ -22,6 +22,9 @@ public class DuckMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(isItFull){
+            StartCoroutine(DestroyPajaro());
+        }
 
         if (Vector3.Distance(transform.position, randomPoint) < 0.6 && !wait)
         {
@@ -67,6 +70,11 @@ public class DuckMovement : MonoBehaviour
             wait = true;
         }
         return;
+    }
+
+    IEnumerator DestroyPajaro(){
+        yield return new WaitForSeconds(5.0f);
+        Destroy(this.gameObject);
     }
 
 
