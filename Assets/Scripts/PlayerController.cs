@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
     public float speed;
-    public float initialSpeed = 10;
+    public float initialSpeed = 11;
      public GameObject food;
      public GameObject focalPoint;
     public bool hasFood;
@@ -109,7 +109,6 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("duck"))
         {
             duckMOvement = other.GetComponent<DuckMovement>();
-            callText.gameObject.SetActive(true);
             canCall = true;
 
         }
@@ -123,7 +122,6 @@ public class PlayerController : MonoBehaviour
     void OnTriggerExit(Collider other)
     {
         duckMOvement = null;
-        callText.gameObject.SetActive(false);
         canCall = false;
         canFeed = false;
     }
@@ -135,12 +133,6 @@ public class PlayerController : MonoBehaviour
         counterManager.DuckFeeded();
     }
 
-    private void OnTriggerEnter(Collider other) {
-        if(other.CompareTag("Food")){
-            hasFood = true;
-            food.gameObject.SetActive(true);
-        }
-    }
     void Jump(){
         playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         isOnGround = false;

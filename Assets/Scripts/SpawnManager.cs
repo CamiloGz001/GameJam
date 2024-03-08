@@ -6,7 +6,7 @@ public class SpawnManager : MonoBehaviour
 {
     [SerializeField]
     GameObject DuckPrefab;
-    public int duckCount = 0;
+    public int duckCount = 1;
     // Start is called before the first frame update
     void Start()
     {
