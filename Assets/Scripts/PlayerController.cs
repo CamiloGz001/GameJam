@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public bool canFeed = false;
     public CounterManager counterManager;
     public float jumpForce = 4f;
+    public bool isOnGround = true;
 
     void Start()
     {
@@ -64,7 +65,7 @@ public class PlayerController : MonoBehaviour
         {
             ToFeed(duckMOvement);
         }
-        if(Input.GetKeyDown(KeyCode.Space)){
+        if(Input.GetKeyDown(KeyCode.Space) && isOnGround){
             Jump();
         }
         
@@ -142,5 +143,12 @@ public class PlayerController : MonoBehaviour
     }
     void Jump(){
         playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        isOnGround = false;
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        if(collision.gameObject.CompareTag("Ground")){
+            isOnGround = true;
+        } 
     }
 }
