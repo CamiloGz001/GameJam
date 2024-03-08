@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,6 +12,8 @@ public class PlayerController : MonoBehaviour
     public int currentEnergy;
     public Energy energyBar;
     [SerializeField] private Animator playerAnim;
+
+    private bool isBoosting = false;
 
     void Start()
     {
@@ -30,61 +31,74 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            playerRb.AddForce(focalPoint.transform.forward * speed * Time.deltaTime);
-            GetTired();
+            isBoosting = true;
         }
-        
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            isBoosting = false;
+        }
+
         Recover();
-        speed = initialSpeed;
     }
 
     void Movement()
-{
-    float forwardInput = Input.GetAxis("Vertical");
-    float horizontalInput = Input.GetAxis("Horizontal");
-    Vector3 forwardForce = focalPoint.transform.forward * forwardInput * speed;
-    Vector3 horizontalForce = focalPoint.transform.right * horizontalInput * speed;
-
-    playerRb.AddForce(forwardForce);
-    playerRb.AddForce(horizontalForce);
-
-    // Rotación del jugador
-    if (forwardInput != 0 || horizontalInput != 0)
     {
-        Quaternion newRotation = Quaternion.LookRotation(forwardForce + horizontalForce);
-        playerRb.MoveRotation(newRotation);
-    }
+        float forwardInput = Input.GetAxis("Vertical");
+        float horizontalInput = Input.GetAxis("Horizontal");
 
-    //PlayerAnimation
-    if (forwardInput != 0 || horizontalInput != 0)
-    {
-        playerAnim.SetBool("Walking", true);
-    }
-    else
-    {
-        playerAnim.SetBool("Walking", false);
-    }
-}
+        Vector3 forwardForce = focalPoint.transform.forward * forwardInput * speed * Time.deltaTime;
+        Vector3 horizontalForce = focalPoint.transform.right * horizontalInput * speed * Time.deltaTime;
 
-    void GetTired()
-    {
-        for (int i = 0; i < maxEnergy; i++)
+        // Aplicar fuerzas al jugador solo si hay entrada de movimiento
+        if (forwardInput != 0 || horizontalInput != 0)
         {
-            currentEnergy -= i;
+            // Agregar fuerzas de movimiento
+            playerRb.AddForce(forwardForce, ForceMode.VelocityChange);
+            playerRb.AddForce(horizontalForce, ForceMode.VelocityChange);
+
+            // Rotar el jugador hacia la dirección de movimiento
+            Quaternion newRotation = Quaternion.LookRotation(forwardForce + horizontalForce);
+            playerRb.MoveRotation(newRotation);
+
+            // Animación del jugador
+            playerAnim.SetBool("Walking", true);
+        }
+        else
+        {
+            // Detener la animación si no hay movimiento
+            playerAnim.SetBool("Walking", false);
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (isBoosting && currentEnergy > 0)
+        {
+            // Aumentar la velocidad mientras se mantiene presionada la tecla Espacio
+            speed += 1;
+
+            // Disminuir la energía
+            currentEnergy--;
             energyBar.SetEnergy(currentEnergy);
-            if (currentEnergy == 0)
-            {
-                speed = 250;
-            }
+        }
+        else
+        {
+            // Restaurar la velocidad inicial si la tecla Espacio no está presionada
+            speed = initialSpeed;
         }
     }
 
     void Recover()
     {
-        for (int i = 0; i < maxEnergy; i++)
+        // Recuperar la energía con el tiempo
+        currentEnergy++;
+        energyBar.SetEnergy(currentEnergy);
+
+        // Asegurarse de que la energía no supere el máximo
+        if (currentEnergy > maxEnergy)
         {
-            currentEnergy += i;
-            energyBar.SetEnergy(currentEnergy);
+            currentEnergy = maxEnergy;
         }
     }
 }
